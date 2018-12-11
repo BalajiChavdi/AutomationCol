@@ -1,0 +1,108 @@
+#!/usr/bin/expect -f
+
+if { $argc != 1 } {
+    puts "usage: $argv0 hostname"
+    exit 1
+} else {
+    set host [lindex $argv 0]
+#    append host ".juniper.net"
+}
+
+set timeout 5
+set destuser Username
+set destpassword password
+set prompt "(%|#|\\$|%\]) $"
+set destpath "$destuser@$host"
+
+# connect via ssh to Jump host
+
+case $host {
+        gngsvm009d.juniper.net {
+                                set jump "gngsvj009c.juniper.net"
+        }
+        gngsvm010d.juniper.net {
+                                set jump "gngsvj009c.juniper.net"
+        }
+        gngsvm011d.juniper.net {
+                                set jump "gngsvj009c.juniper.net"
+        }
+        gngsvm030d.juniper.net {
+                                set jump "gngsvj030c.juniper.net"
+        }
+        gngsvm031d.juniper.net {
+                                set jump "gngsvj030c.juniper.net"
+        }
+        gngsvm032d.juniper.net {
+                                set jump "gngsvj030c.juniper.net"
+        }
+        gngbnm001d.juniper.net {
+                                set jump "gngbnj001c.juniper.net"
+        }
+        gngbnm002d.juniper.net {
+                                set jump "gngbnj001c.juniper.net"
+        }
+        gngbnm003d.juniper.net {
+                                set jump "gngbnj001c.juniper.net"
+        }
+        gngbnm013d.juniper.net {
+                                set jump "gngbnj013c.juniper.net"
+        }
+        gngbnm014d.juniper.net {
+                                set jump "gngbnj013c.juniper.net"
+        }
+        gngbnm015d.juniper.net {
+                                set jump "gngbnj013c.juniper.net"
+        }
+        gngbnm025d.juniper.net {
+                                set jump "gngbnj025c.juniper.net"
+        }
+        gngbnm026d.juniper.net {
+                                set jump "gngbnj025c.juniper.net"
+        }
+        gngbnm027d.juniper.net {
+                                set jump "gngbnj025c.juniper.net"
+        }
+        gngbnm037d.juniper.net {
+                                set jump "gngbnj037c.juniper.net"
+        }
+        gngbnm038d.juniper.net {
+                                set jump "gngbnj037c.juniper.net"
+        }
+        gngbnm039d.juniper.net {
+                                set jump "gngbnj037c.juniper.net"
+        }
+        * {
+            puts "\nInvalid hostname\n"
+            exit 1
+        }
+}
+
+  spawn ssh -o ConnectTimeout=5 $destuser@$jump
+  expect {
+  -re ".*yes/no.*" {
+    exp_send "yes\r"
+    exp_continue
+    }
+  -re ".*assword.*" {
+      exp_send "$destpassword\r"
+    }
+    }
+  expect -re "$prompt"
+
+# remote server login.
+  send -- "ssh $destpath\r"
+  expect {
+  -re ".*yes/no.*" {
+      exp_send "yes\r"
+      exp_continue
+      }
+  -re ".*Enter passphrase for key.*" {
+      exp_send "\r"
+      exp_continue
+      }
+    -re ".*assword.*" {
+        exp_send "$destpassword\r"
+      }
+      }
+
+interact
