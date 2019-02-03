@@ -59,6 +59,10 @@ case $host {
       }
     -re ".*assword.*" {
         exp_send "$destpassword\r"
+        expect -re "$prompt"
+        send -- "$src\n"
+        puts \033\[2J
+        puts "Welcome User...!\n"
       }
       }
 interact
